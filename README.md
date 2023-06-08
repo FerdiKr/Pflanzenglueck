@@ -14,9 +14,9 @@ Kurzanleitung:
 - Pflanzenglueck_ESP.ino auf einen entsprechenden Microcontroller (ESP32) flashen
 - Bewässerungsgeräte anschließen: z.B. Magnetventile (ggf. über Relais oder Mosfets falls höhere Spannung benötigt), die eine Wasserzufuhr aus einem höheren Reservoir öffnen oder schließen, oder Modellbau-Pumpen
 
-FAQ:
- F: Warum ist das alles so überkompliziert aufgebaut, siehe WebComponents und localization-System?
- A: Diese Systeme wurden für andere, komplexere Anwendungen entwickelt und hier einfach aus Gewohnheit weiterverwendet
-
- F: Warum sieht der Code-Stil teilweise so unterschiedlich aus?
- A: Geschrieben mit freundlicher Unterstützung von ChatGPT ^^
+FAQ:<br>
+ F: Warum ist das alles so überkompliziert aufgebaut, siehe WebComponents, optionale Azure-Integration und localization-System?<br>
+ A: Diese Systeme wurden für andere, komplexere Anwendungen entwickelt und hier einfach aus Gewohnheit weiterverwendet<br>
+<br>
+ F: Warum sieht der Code-Stil teilweise so unterschiedlich aus?<br>
+ A: Geschrieben mit freundlicher Unterstützung von ChatGPT ^^<br>
