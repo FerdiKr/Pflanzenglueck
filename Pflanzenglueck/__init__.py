@@ -59,6 +59,8 @@ def create_app():
         strg.mkdir(username)
         user_rules_path = strg.path_join(strg.base_path,username,'rules.json')
         strg.write_file(user_rules_path,json.dumps([]))
+        user_previous_rules_path = strg.path_join(strg.base_path,username,'previous_rules.json')
+        strg.write_file(user_previous_rules_path,json.dumps([]))
         db.session.commit()
         print('User added')
 

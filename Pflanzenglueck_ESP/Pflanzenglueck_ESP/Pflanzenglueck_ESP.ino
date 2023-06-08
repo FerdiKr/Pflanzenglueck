@@ -8,7 +8,7 @@
 const char* ssid = "YOUR_WIFI_SSID";
 const char* password = "YOUR_WIFI_PASSWORD";
 const char* apiKey = "YOUR_PFLANZENGLUECK_API_KEY";
-const char* serverEndpoint = "https://YOUR_PFLANZENGLUECK_INSTANCE/api_precalc";
+const char* serverEndpoint = "https://YOUR_PFLANZENGLUECK_INSTANCE";
 //#########################################< USER CONFIGURATION END >#########################################//
 const char* ntpServer = "pool.ntp.org";
 
@@ -19,6 +19,7 @@ const char* ntpServer = "pool.ntp.org";
 RTC_DATA_ATTR int32_t timestampsArray[ARRAY_SIZE];
 RTC_DATA_ATTR uint8_t pinsArray[ARRAY_SIZE];
 RTC_DATA_ATTR uint8_t commandsArray[ARRAY_SIZE];
+RTC_DATA_ATTR bool pinsState[40] = {false}; // Assume max 40 GPIO, set all to LOW initially
 RTC_DATA_ATTR uint8_t maxIndex = 0;
 RTC_DATA_ATTR uint8_t currentIndex = 0;
 RTC_DATA_ATTR bool just_started = true;
@@ -27,6 +28,12 @@ void ESP_go_to_deep_sleep(uint32_t seconds){
   Serial.flush();
   esp_sleep_enable_timer_wakeup(seconds*uS_TO_S_FACTOR);
   esp_deep_sleep_start();
+}
+
+void ESP_go_to_light_sleep(uint32_t seconds) {
+  Serial.println("Going to Light Sleep...");
+  esp_sleep_enable_timer_wakeup(seconds * uS_TO_S_FACTOR);
+  esp_light_sleep_start();
 }
 
 int parsePrecalcAPIJson(Stream& stream, int32_t *timestampsArray, uint8_t *pinsArray, uint8_t *commandsArray, uint8_t *maxIndex) {
@@ -56,7 +63,7 @@ int parsePrecalcAPIJson(Stream& stream, int32_t *timestampsArray, uint8_t *pinsA
 int getPrecalcAPIInstructions(int32_t *timestampsArray, uint8_t *pinsArray, uint8_t *commandsArray, uint8_t *maxIndex){
   if ((WiFi.status() == WL_CONNECTED)) {
     HTTPClient http;
-    String requestUrl = String(serverEndpoint) + "?api_key=" + String(apiKey) + "&array_size=" + String(ARRAY_SIZE);
+    String requestUrl = String(serverEndpoint) + "/api_precalc" + "?api_key=" + String(apiKey) + "&array_size=" + String(ARRAY_SIZE);
     Serial.println(requestUrl);
     http.begin(requestUrl);
     int httpResponseCode = http.GET();
@@ -64,7 +71,6 @@ int getPrecalcAPIInstructions(int32_t *timestampsArray, uint8_t *pinsArray, uint
 
     if (httpResponseCode > 0) {
       Stream& stream = http.getStream();
-      delay(1000);
       if (parsePrecalcAPIJson(stream, timestampsArray, pinsArray, commandsArray, maxIndex)>0){
         return 1;
       }
@@ -75,11 +81,36 @@ int getPrecalcAPIInstructions(int32_t *timestampsArray, uint8_t *pinsArray, uint
     }
 
     http.end();
-    } else {
-      Serial.println("WiFi Disconnected");
-      return 3;
-    }
+  } else {
+    Serial.println("WiFi Disconnected");
+    return 3;
+  }
     return 0;
+}
+
+int rulesChanged() {
+    if (WiFi.status() == WL_CONNECTED) {
+        HTTPClient http;
+        String requestUrl = String(serverEndpoint) + "/api_ruleschanged" + "?api_key=" + String(apiKey);
+        Serial.println(requestUrl);
+        http.begin(requestUrl);
+        int httpResponseCode = http.GET();
+        Serial.println(httpResponseCode);
+
+        if (httpResponseCode > 0) {
+            String payload = http.getString();
+            http.end();
+            return payload.toInt();
+        } else {
+            Serial.print("Error code: ");
+            Serial.println(httpResponseCode);
+            http.end();
+            return -1;
+        }
+    } else {
+        Serial.println("WiFi Disconnected");
+        return -1;
+    }
 }
 
 
@@ -102,7 +133,7 @@ void setup() {
     Serial.println("Clock initialized");
 
     // Need to download new instructions?
-    if (currentIndex == maxIndex){
+    if (currentIndex == maxIndex || rulesChanged() == 1){
       Serial.println("Retrieving new Instructions...");
       if(getPrecalcAPIInstructions(timestampsArray, pinsArray, commandsArray, &maxIndex)>0){
         Serial.println("Error, rebooting...");
@@ -128,6 +159,7 @@ void setup() {
       else{
         digitalWrite(pinsArray[currentIndex], LOW);
       }
+      pinsState[pinsArray[currentIndex]] = commandsArray[currentIndex];
       currentIndex ++;
       if (currentIndex == maxIndex){
         // Last Instruction? "Soft reboot" (by sleeping for a second) to gracefully retrieve new Instructions
@@ -146,18 +178,45 @@ void setup() {
     }
 
     // No pending actions in the next few minutes? Go to sleep for the maximum allowed time
-    if (timestampsArray[currentIndex]-MAX_DEEP_SLEEP_TIME_SECONDS > now){
-      Serial.print("Sleeping for ");
-      Serial.print(MAX_DEEP_SLEEP_TIME_SECONDS);
-      Serial.println(" seconds");
-      ESP_go_to_deep_sleep(MAX_DEEP_SLEEP_TIME_SECONDS);
+    // Decide on sleep mode based on pin states
+    bool anyPinHigh = false;
+    for (int i = 0; i < 40; i++) { // Assuming 40 is the number of GPIO pins
+        if (pinsState[i]) {
+            anyPinHigh = true;
+            break;
+        }
     }
-    // Otherwise, sleep exactly as long as necessary
-    else{
-      Serial.print("Sleeping for ");
-      Serial.print(timestampsArray[currentIndex]-now);
-      Serial.println(" seconds");
-      ESP_go_to_deep_sleep(timestampsArray[currentIndex]-now);
+
+    if (anyPinHigh) {
+        // If at least one pin is HIGH, use light sleep
+        Serial.println("At least one pin is HIGH. Using Light Sleep.");
+        if (timestampsArray[currentIndex] - MAX_DEEP_SLEEP_TIME_SECONDS > now) {
+            Serial.print("Light Sleep for ");
+            Serial.print(MAX_DEEP_SLEEP_TIME_SECONDS);
+            Serial.println(" seconds.");
+            ESP_go_to_light_sleep(MAX_DEEP_SLEEP_TIME_SECONDS);
+        } else {
+            Serial.print("Light Sleep for ");
+            Serial.print(timestampsArray[currentIndex] - now);
+            Serial.println(" seconds.");
+            ESP_go_to_light_sleep(timestampsArray[currentIndex] - now);
+        }
+        // Restart ESP32 after waking up from light sleep to re-run setup()
+        esp_restart();
+    } else {
+        // If all pins are LOW, use deep sleep
+        Serial.println("All pins are LOW. Using Deep Sleep.");
+        if (timestampsArray[currentIndex] - MAX_DEEP_SLEEP_TIME_SECONDS > now) {
+            Serial.print("Deep Sleep for ");
+            Serial.print(MAX_DEEP_SLEEP_TIME_SECONDS);
+            Serial.println(" seconds.");
+            ESP_go_to_deep_sleep(MAX_DEEP_SLEEP_TIME_SECONDS);
+        } else {
+            Serial.print("Deep Sleep for ");
+            Serial.print(timestampsArray[currentIndex] - now);
+            Serial.println(" seconds.");
+            ESP_go_to_deep_sleep(timestampsArray[currentIndex] - now);
+        }
     }
 }
 

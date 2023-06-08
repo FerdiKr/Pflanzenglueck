@@ -69,7 +69,9 @@ def save_rule():
 
     # Lade die vorhandenen Regeln aus der JSON-Datei
     rules_file_path = storage.path_join(current_user.name, 'rules.json')
+    previous_rules_file_path = storage.path_join(current_user.name, 'previous_rules.json')
     rules = json.loads(storage.read_file(rules_file_path))
+    previous_rules = json.dumps(rules)
 
     if rule_id:  # Falls eine Regel-ID vorhanden ist...
         for rule in rules:
@@ -87,7 +89,7 @@ def save_rule():
                     'duration': duration,
                     'description': action_description
                 }
-                message = 'Regel erfolgreich aktualisiert.'  # Passen Sie die Erfolgsmeldung an
+                message = 'Regel erfolgreich aktualisiert.'
                 break
         else:
             return jsonify({'error': 'Keine Regel mit dieser ID gefunden.'}), 404
@@ -127,6 +129,7 @@ def save_rule():
         return jsonify({'error': f'Für Pin {pin} existiert bereits eine Regel ("{conflicting_rule["name"]}") mit einer Aktion ("{conflicting_rule["action"]["description"]}"), die mit dieser im Widerspruch steht.'}), 400
 
     storage.write_file(rules_file_path, json.dumps(rules))
+    storage.write_file(previous_rules_file_path, previous_rules)
 
     return jsonify({'message': message})
 

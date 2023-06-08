@@ -85,3 +85,14 @@ def get_commands():
         "pins": pins,
         "commands": commands
     })
+
+@api.route('/api_ruleschanged')
+@login_required
+def rules_changed():
+    # Gibt aus, ob sich seit der letzten Abfrage die Regeln des Nutzers geändert haben
+    rules_file_path = storage.path_join(current_user.name, 'rules.json')
+    previous_rules_file_path = storage.path_join(current_user.name, 'previous_rules.json')
+    changed = storage.read_file(rules_file_path) != storage.read_file(previous_rules_file_path)
+    if changed:
+        storage.write_file(previous_rules_file_path,storage.read_file(rules_file_path))
+    return str(int(changed))
