@@ -1,0 +1,30 @@
+{% extends "dialog_modal/dialog_modal.js" %}
+
+{% block html %}
+<link rel="stylesheet" href="/static/css/bulma_0_9_4_min.css"/>
+<link rel="stylesheet" href="/static/css/material_icons.css"/>
+
+<div id="modal" class="modal" hidden>
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Frage</p>
+            <!-- <button class="delete" aria-label="close"></button> -->
+          </header>
+        <section class="modal-card-body">
+            Wirklich?
+        </section>
+        <footer class="modal-card-foot">
+            <div class="columns is-fullwidth is-mobile" style="width:100%;margin-left:''">
+                <div class="column is-half">
+                    <button class="button is-success is-fullwidth">Ja</button>
+                </div>
+                <div class="column is-half">
+                    <button class="button is-danger is-fullwidth">Nein</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- <button class="modal-close is-large" aria-label="close"></button> -->
+</div>
+{% endblock %}

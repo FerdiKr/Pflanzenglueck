@@ -1,0 +1,41 @@
+.inline-text{
+    display:inline-flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    color:black;
+    text-align: center;
+}
+.inline-text input{
+    margin-right:5px;
+}
+.inline-checkbox:hover{color:#363636}
+
+.li-counterpart{
+    margin-top:0.25em;
+    margin-bottom:0px !important;
+}
+
+.does-expand-contract {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    .is-full-mobile {
+      flex: none;
+      width: 100%;
+    }
+  }
+  
+  @media screen and (min-width: 769px) {
+    .is-half-tablet {
+      flex: none;
+      width: 50%;
+    }
+  }

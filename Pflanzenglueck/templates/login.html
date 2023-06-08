@@ -1,0 +1,96 @@
+<!-- templates/login.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero is-success is-small">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <expand-container class="initial-expand-container">
+                        <div id="expand_container_inner" style="display:none">
+                            <p class="title">
+                                {{loc.login.title}}
+                            </p>
+                            <p class="subtitle">
+                                {{ loc.login.subtitle }}
+                            </p>
+                        </div>
+                    </expand-container>
+                    <br>
+                    <expand-container class="initial-expand-container">
+                        <div id="expand_container_inner" style="display:none">
+                            <div class="box has-background-success-light">
+                                <div class="notification is-danger" id="notification" hidden>
+                                    {{loc.anlage_anlegen.notification_name_exists}}
+                                </div>
+
+                                <form id="loginform">
+                                    <div class="field">
+                                        <label class="label">{{loc.login.username}}</label>
+                                        <div class="control">
+                                            <input class="input is-large" type="text" id="unameinput" name="username" placeholder="Benutzername" autofocus="">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">{{loc.login.password}}</label>
+                                        <div class="control">
+                                            <input class="input is-large" type="password" id="pwinput" name="password" placeholder="Passwort">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="remcheckbox">
+                                            {{loc.login.remain_logged_in}}
+                                        </label>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control is-expanded">
+                                            <button type="submit" class="button is-block is-link is-large is-fullwidth">{{loc.login.login}}</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </expand-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<script type="module" src="{{ url_for('components.get', componentname='expand_container') }}"></script>
+<script type="module">
+    import {PromiseBasedPostXHR,setupExpandContainers, adjustParentExpandContainers} from "{{ url_for('static', filename='js/helpers.js') }}";
+    const form = document.querySelector('#loginform');
+
+    setupExpandContainers()
+
+    form.addEventListener('submit', (event) => {
+        // automatisches Absenden der Daten verhindern
+        event.preventDefault();
+
+        const password = document.querySelector("#pwinput").value;
+
+        //Request formulieren
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/login');
+        let formData = new FormData();
+        formData.append("username" , document.querySelector("#unameinput").value);
+        formData.append("password" , password);
+        formData.append("remember" , document.querySelector("#remcheckbox").checked);
+
+        // Request senden
+        xhr.send(formData);
+
+        // Load-Event abhorchen, redirect folgen
+        xhr.onload = () => {
+            window.location.href = xhr.responseURL;
+        }
+    });
+</script>
+{% endblock %}

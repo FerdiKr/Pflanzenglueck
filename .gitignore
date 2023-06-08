@@ -1,0 +1,4 @@
+__pycache__/
+anlagen.sqlite
+rule_data/
+.vscode/

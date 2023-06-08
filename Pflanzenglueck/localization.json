@@ -1,0 +1,106 @@
+{   
+    "common":{
+        "confirm":{
+            "de_DE":"Bestätigen"},
+        "cancel":{
+            "de_DE":"Abbrechen"},
+        "yes":{
+            "de_DE":"Ja"},
+        "no":{
+            "de_DE":"Nein"},
+        "every":{
+            "de_DE":"Alle"},
+        "unit":{
+            "de_DE":"Einheit"},
+        "days":{
+            "de_DE":"Tage"},
+        "hours":{
+            "de_DE":"Stunden"},
+        "error":{
+            "de_DE":"Fehler"}
+    },
+    "index":{
+        "title":{
+            "de_DE":"Pflanzenglück"},
+        "subtitle":{
+           "de_DE":"...die komfortable Fern-Bewässerungssteuerung, die Pflanzen glücklich macht 🌼🚰"},
+        "login":{
+            "de_DE":"Anmelden"}
+    },
+    "login":{
+        "title":{
+            "de_DE":"Einloggen, bitte!"},
+        "subtitle":{
+            "de_DE":"Die einzige Gießkanne, für die man ein Passwort braucht..."},
+        "username":{
+            "de_DE":"Benutzername"},
+        "password":{
+            "de_DE":"Passwort"},
+        "remain_logged_in":{
+            "de_DE":"Eingeloggt bleiben"},
+        "login":{
+            "de_DE":"Anmelden"}
+    },
+    "navbar":{
+        "rules":{
+            "de_DE":"Bewässerungsplan"},
+        "profile":{
+            "de_DE":"Profil"}
+    },
+    "rules":{
+        "title":{
+            "de_DE":"Bewässerung nach Plan"},
+        "subtitle":{
+            "de_DE":"Auf dieser Seite kann der Bewässerungsplan in Form von einzelnen Bewässerungsregeln zusammengestellt werden."},
+        "add_rule":{
+            "de_DE":"Neue Regel erstellen"},
+        "error_deleting_rule":{
+            "de_DE":"Fehler beim Löschen der Regel"},
+        "error_loading_rules":{
+            "de_DE":"Fehler beim Laden der Regeln"},
+        "modal":{
+            "title":{
+                "de_DE":"Regel-Editor"},
+            "confirm":{
+                "de_DE":"Regel speichern"},
+            "name":{
+                "de_DE":"Name der Regel, zum leichteren Wiederfinden:"},
+            "name_placeholder":{
+                "de_DE":"z.B. \"Tomaten täglich\""},
+            "when":{
+                "de_DE":"Wann soll gegossen werden?"},
+            "repeat":{
+                "de_DE":"Gießen wiederholen?"},
+            "action_title":{
+                "de_DE":"Aktion zum Gießen"},
+            "pin":{
+                "de_DE":"Pin am Microcontroller"},
+            "duration_seconds":{
+                "de_DE":"Dauer (in Sekunden)"},
+            "action":{
+                "de_DE":"Aktion"},
+            "high_for_duration":{
+                "de_DE":"AN für die angegebene Dauer"},
+            "low_for_duration":{
+                "de_DE":"AUS für die angegebene Dauer"} 
+        },
+        "dialog":{
+            "title":{
+                "de_DE":"Regel löschen?"},
+            "content":{
+                "de_DE":"Möchtest du die Regel \"${rule.name}\" wirklich löschen?"}
+        }
+    },
+    "profile":{
+        "title":{
+            "de_DE":"s Pflanzenglück"},
+        "subtitle":{
+            "de_DE":"Infos und Einstellungen für den Hobby-Ferngärtner"},
+        "api_key_description":{
+            "de_DE":"Hier findest du deinen persönlichen API-Key, mit dem deine Bewässerungsgeräte deine Regeln abrufen können. Dieser Key ist wie ein Passwort, verwahre ihn also sicher!"},
+        "logout_button_description":{
+            "de_DE":"Mit diesem Button kannst du dich sicher abmelden, damit böswillige andere Benutzer dieses Computers nicht deine Pflanzen fluten können:"},
+        "logout_button":{
+            "de_DE":"Logout"}
+    }
+}

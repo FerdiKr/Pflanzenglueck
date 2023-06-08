@@ -1,0 +1,15 @@
+{% extends "expand_container/expand_container.js" %}
+
+{% block html %}
+
+<style>
+  #expandcontainer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+  }
+</style>
+<div id="expandcontainer">
+     <slot></slot>
+</div>
+{% endblock %}

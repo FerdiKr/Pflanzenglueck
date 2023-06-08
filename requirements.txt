@@ -1,0 +1,7 @@
+flask
+flask_sqlalchemy==2.5.1
+SQLAlchemy==1.4.46
+flask-login
+azure-storage-blob
+dotmap
+click

@@ -1,0 +1,323 @@
+<!-- templates/rules.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero is-success is-small">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="columns is-centered">
+                <div class="column is-three-quarters">
+                    <expand-container class="initial-expand-container">
+                        <div id="expand_container_inner" style="display:none">
+                            <p class="title">
+                                {{loc.rules.title}}
+                            </p>
+                            <p class="subtitle">
+                                {{ loc.rules.subtitle }}
+                            </p>
+                        </div>
+                    </expand-container>
+                    <br>
+                    <button class="button is-link is-large" id="create-rule-button">
+                        <i class='material-icons'>playlist_add</i>&ensp;{{loc.rules.add_rule}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>   
+</section>
+<br>
+<section>
+    <div class="container">
+        <div class="columns is-centered is-mobile is-gapless">
+            <div class="column is-11">
+                <expand-container class="initial-expand-container">
+                    <div id="expand_container_inner" style="display:none">
+                        <!-- <h1 class="title">Regeln</h1> -->
+
+                        <div id="rules-container"></div> <!-- Der Container für die Regelkästen -->
+                    </div>
+                </expand-container>
+            </div>
+        </div>
+    </div>
+</section>
+<br>
+
+
+<div id="create-rule-modal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card" style="width:95%; max-height:100%; max-width:600px">
+        <header class="modal-card-head">
+          <p class="modal-card-title">{{loc.rules.modal.title}}</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <form id="regel-form" action="/save_rule" method="POST">
+                <input type="hidden" id="rule-id" name="rule-id" value="">
+                <div class="field">
+                    <label class="label" for="rule-name">{{loc.rules.modal.name}}</label>
+                    <div class="control">
+                      <input class="input" type="text" id="rule-name" name="rule-name" placeholder='{{loc.rules.modal.name_placeholder}}' required>
+                    </div>
+                </div>
+        
+                <div class="field">
+                  <label class="label" for="first-watering">{{loc.rules.modal.when}}</label>
+                  <div class="control">
+                    <input class="input" type="datetime-local" id="first-watering" name="first-watering" required>
+                  </div>
+                </div>
+        
+                <div class="field">
+                  <label class="label">{{loc.rules.modal.repeat}}</label>
+                  <div class="control">
+                    <label class="radio">
+                      <input type="radio" name="repeat-radio" id="no-repeat-radio" value="no-repeat" checked>
+                      {{loc.common.no}}
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="repeat-radio" id="repeat-radio" value="repeat">
+                      {{loc.common.yes}}
+                    </label>
+                  </div>
+                </div>
+        
+                <div id="repeat-section" class="field is-grouped is-grouped-multiline" style="flex-wrap: wrap;">
+                    <div class="control" style="flex: 2 0 0;" hidden>
+                        <label class="label">{{loc.common.every}}:</label>
+                        <input class="input" type="number" id="repeat" name="repeat" min="1" value="1">
+                    </div>
+                    <div class="control" style="flex: 1 0 0;" hidden>
+                        <label class="label">{{loc.common.unit}}:</label>
+                        <div class="select">
+                            <select id="repeat-unit" name="repeat-unit">
+                                <option value="days">{{loc.common.days}}</option>
+                                <option value="hours">{{loc.common.hours}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="field">
+                  <h2 class="title is-4">{{loc.rules.modal.action_title}}</h2>
+                </div>
+        
+                <div class="field is-grouped is-grouped-multiline">
+                    <div class="control is-full-mobile">
+                        <label class="label" for="pin">{{loc.rules.modal.pin}}:</label>
+                        <input class="input" type="number" id="pin" name="pin" min="0" required>
+                    </div>
+                
+                    <div class="control is-full-mobile">
+                        <label class="label" for="duration">{{loc.rules.modal.duration_seconds}}:</label>
+                        <input class="input" type="number" id="duration" name="duration" min="1" value="1" required>
+                    </div>
+                
+                    <div class="control is-full-mobile">
+                        <label class="label" for="action-description">{{loc.rules.modal.action}}:</label>
+                        <div class="select is-full-mobile">
+                          <select id="action-description" class="is-full-mobile" name="action-description" required>
+                            <option value="high-for-duration">{{loc.rules.modal.high_for_duration}}</option>
+                            <option value="low-for-duration">{{loc.rules.modal.low_for_duration}}</option>
+                          </select>
+                        </div>
+                    </div>
+                </div>
+            
+            </form>
+            <br>
+            <beautiful-notification></beautiful-notification>
+        </section>
+        <footer class="modal-card-foot">
+            <div class="columns is-centered is-fullwidth is-mobile" style="width:100%;margin-left:''">
+                <div class="column is-half">
+                    <button class="button is-success is-fullwidth" type="submit" form="regel-form">{{loc.rules.modal.confirm}}</button>
+                </div>
+                <div class="column is-half">
+                    <button class="button is-danger is-fullwidth">{{loc.common.cancel}}</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <button class="modal-close is-large is-hidden-mobile" aria-label="close"></button>
+</div>
+<dialog-modal class="initially_hidden" hidden></dialog-modal>
+
+<script type="module" src="{{ url_for('components.get', componentname='expand_container') }}"></script>
+<script type="module" src="{{ url_for('components.get', componentname='beautiful_notification') }}"></script>
+<script type="module" src="{{ url_for('components.get', componentname='dialog_modal') }}"></script>
+<script type="module">
+    import {setupExpandContainers, adjustParentExpandContainers} from "{{ url_for('static', filename='js/helpers.js') }}";
+    const createrulemodal = document.querySelector("#create-rule-modal");
+    const createrulebutton = document.querySelector("#create-rule-button");
+
+    setupExpandContainers();
+
+    // Add a click event on various child elements to close the parent modal
+    (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .is-danger') || []).forEach(($close) => {
+      $close.addEventListener('click', () => {
+        createrulemodal.classList.remove('is-active');
+        clearForm();
+      });
+    });
+
+    createrulebutton.addEventListener("click",() => {
+        event.preventDefault();
+        event.stopPropagation(); 
+        createrulemodal.classList.add('is-active');
+    });
+
+    const repeatRadio = document.querySelectorAll('input[name="repeat-radio"]');
+    const repeatSection = document.getElementById('repeat-section');
+    const form = document.querySelector('#regel-form');
+
+    repeatRadio.forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        if (this.value === 'repeat') {
+          repeatSection.querySelectorAll('.control').forEach((control) => control.hidden = false);
+        } else {
+          repeatSection.querySelectorAll('.control').forEach((control) => control.hidden = true);
+        }
+      });
+    });
+
+    function clearForm(){
+        document.getElementById('rule-id').value = '';
+        repeatSection.querySelectorAll('.control').forEach((control) => control.hidden = true);
+        document.querySelector('beautiful-notification').close()
+        form.reset();
+    }
+
+    const form_submit_button = document.querySelector('.modal-card-foot .is-success');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      form_submit_button.classList.add('is-loading');
+
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+        method: form.method,
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+            form_submit_button.classList.remove('is-loading');
+            document.querySelector('beautiful-notification').open('is-danger',`<strong>{{loc.common.error}}:</strong> ${data.error}`);
+        } else {
+            form_submit_button.classList.remove('is-loading');
+            createrulemodal.classList.remove('is-active');
+
+            // Setzen Sie die Regel-ID zurück, um ein erneutes Erstellen von Regeln zu ermöglichen:
+            clearForm();
+            loadRules();
+        }
+      })
+      .catch(error => {
+        form_submit_button.classList.remove('is-loading');
+        console.error(error);
+      });
+    });
+
+    // Funktion zum Löschen einer Regel
+    function deleteRule(rule) {
+        // nachfragen!
+        const dialogmodal = document.querySelector('dialog-modal');
+        dialogmodal.open('{{loc.rules.dialog.title}}',`{{loc.rules.dialog.content}}`,'{{loc.common.confirm}}','{{loc.common.cancel}}').then((response)=>{
+            if(response){
+                fetch(`{{ url_for('main.delete_rule',rule_id=0) }}`+rule.id, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('{{loc.common.error}}:', data.error);
+                    } else {
+                        // Nach dem Löschen der Regel, aktualisieren wir die Liste der Regeln.
+                        loadRules();
+                    }
+                })
+                .catch(error => console.error('{{loc.rules.error_deleting_rule}}:', error));
+            }
+            dialogmodal.close();
+        });
+    }
+
+    // Eine Funktion, die eine Regel in das Formular lädt
+    function loadRuleIntoForm(rule) {
+        document.getElementById('rule-id').value = rule.id;  // Laden der Regel-ID
+        document.getElementById('rule-name').value = rule.name;
+        document.getElementById('first-watering').value = rule.first_watering;
+        document.getElementById('pin').value = rule.action.pin;
+        document.getElementById('duration').value = rule.action.duration;
+        document.getElementById('action-description').value = rule.action.description;
+
+        if (rule.repeat) {
+          document.getElementById('repeat-radio').checked = true;
+          document.getElementById('repeat').value = rule.repeat_interval.value;
+          document.getElementById('repeat-unit').value = rule.repeat_interval.unit;
+          repeatSection.querySelectorAll('.control').forEach((control) => control.hidden = false);
+        } else {
+          document.getElementById('no-repeat-radio').checked = true;
+          repeatSection.querySelectorAll('.control').forEach((control) => control.hidden = true);
+        }
+        createrulemodal.classList.add('is-active');
+    }
+
+    // JavaScript-Code für den AJAX-Aufruf und die Aktualisierung der Seite
+    function loadRules() {
+        fetch('{{url_for("main.get_rules")}}')
+        .then(response => response.json())
+        .then(rules => {
+            const container = document.getElementById('rules-container');
+            container.innerHTML = '';
+
+            rules.forEach(rule => {
+                const ruleBox = document.createElement('div');
+                ruleBox.classList.add('box','has-background-success-light'); 
+
+                const ruleBoxColumns = document.createElement('div');
+                ruleBoxColumns.classList.add('columns','is-mobile');
+
+                const ruleBoxColumnLeft = document.createElement('div');
+                ruleBoxColumnLeft.classList.add('column', 'is-flex', 'is-align-items-center');
+                ruleBoxColumnLeft.innerHTML = `<h2 class="subtitle">${rule.name}</h2>`;
+
+                const ruleBoxColumnRight = document.createElement('div');
+                ruleBoxColumnRight.classList.add('column', 'is-flex', 'is-justify-content-flex-end', 'is-align-items-center');
+
+                const editButton = document.createElement('button');
+                editButton.classList.add('button', 'is-link', 'edit-button', 'mr-3');
+                editButton.innerHTML = "<i class='material-icons'>edit</i>";
+                editButton.addEventListener('click', () => loadRuleIntoForm(rule));
+
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('button', 'is-danger', 'delete-button');
+                deleteButton.innerHTML = '<i class="material-icons">delete</i>';
+                deleteButton.addEventListener('click', () => deleteRule(rule));
+
+                ruleBoxColumnRight.appendChild(editButton);
+                ruleBoxColumnRight.appendChild(deleteButton);
+                ruleBoxColumns.appendChild(ruleBoxColumnLeft);
+                ruleBoxColumns.appendChild(ruleBoxColumnRight);
+                ruleBox.appendChild(ruleBoxColumns);
+                container.appendChild(ruleBox);
+                adjustParentExpandContainers(ruleBox);
+            });
+        })
+        .catch(error => console.error('{{loc.rules.error_loading_rules}}:', error));
+    }
+
+    // Laden der Regeln, sobald das Dokument vollständig geladen ist
+    document.addEventListener('DOMContentLoaded', ()=>{
+        loadRules();
+        document.querySelectorAll('.initially_hidden').forEach(element=>element.hidden=false);
+    });
+
+    
+</script>
+
+{% endblock %}

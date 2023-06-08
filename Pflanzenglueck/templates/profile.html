@@ -1,0 +1,69 @@
+<!-- templates/rules.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero is-success is-small">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="columns is-centered">
+                <div class="column is-three-quarters">
+                    <expand-container class="initial-expand-container">
+                        <div id="expand_container_inner" style="display:none">
+                            <p class="title">
+                                {{current_user.name}}{{loc.profile.title}}
+                            </p>
+                            <p class="subtitle">
+                                {{ loc.profile.subtitle }}
+                            </p>
+                        </div>
+                    </expand-container>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-three-quarters">
+                    <expand-container class="initial-expand-container">
+                        <div id="expand_container_inner" style="display:none">
+                            <p class="subtitle">
+                                {{loc.profile.api_key_description}}
+                            </p>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="text" value="{{current_user.api_key}}" readonly>
+                                </div>
+                            </div>
+                            <br>
+                            <p class="subtitle">
+                                {{loc.profile.logout_button_description}}
+                            </p>
+                            <div class="field">
+                                <div class="control">
+                                    <a href="{{url_for('auth.logout')}}">
+                                        <button class="button is-link is-rounded is-large is-fullwidth">
+                                            <i class="material-icons">logout</i>&ensp;{{loc.profile.logout_button}}
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </expand-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script type="module" src="{{ url_for('components.get', componentname='expand_container') }}"></script>
+<script type="module">
+    import {setupExpandContainers, adjustParentExpandContainers} from "{{ url_for('static', filename='js/helpers.js') }}";
+
+    setupExpandContainers();
+</script>
+
+{% endblock %}

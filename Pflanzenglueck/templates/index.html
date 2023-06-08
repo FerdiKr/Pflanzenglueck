@@ -1,0 +1,51 @@
+<!-- templates/index.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero is-success is-small">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="columns is-centered">
+                <div class="column is-three-quarters">
+                    <expand-container class="initial-expand-container">
+                        <div id="expand_container_inner" style="display:none">
+                            <div class="container has-text-centered">
+                                <h1 class="title">
+                                    {{loc.index.title}}<br>
+                                </h1>
+                                <h2 class="subtitle">
+                                    {{loc.index.subtitle}} 
+                                </h2>
+                            </div>
+                        </div>
+                    </expand-container>
+                    <br>
+                
+                    <expand-container class="initial-expand-container">
+                        <div id="expand_container_inner" style="display:none">
+                            <figure class="image is-1by1">
+                                <img class="has-ratio" width="1024" height="1024" src="{{url_for('static',filename='images/robot_watering_plants.jpeg')}}">
+                            </figure>
+                        </div>
+                    </expand-container>
+                    <br>
+                
+                    <a href="{{ url_for('auth.login') }}">
+                        <button class="button is-link is-rounded is-large is-fullwidth">{{loc.index.login}}</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>   
+</section>
+
+<script type="module" src="{{ url_for('components.get', componentname='expand_container') }}"></script>
+<script type="module">
+    import {setupExpandContainers} from "{{ url_for('static', filename='js/helpers.js') }}";
+
+    setupExpandContainers();
+</script>
+
+{% endblock %}

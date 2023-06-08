@@ -1,0 +1,23 @@
+{% extends "beautiful_notification/beautiful_notification.js" %}
+
+{% block html %}
+
+<link rel="stylesheet" href="/static/css/bulma_0_9_4_min.css"/>
+<script src="/static/js/fontawesome_6_all.js"></script>
+
+<style>
+    .does-expand-contract {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease-out;
+    }
+</style>
+
+<div class="does-expand-contract">
+    <div class="notification">
+        <button class="delete"></button>
+        <p class="content">placeholder</p>
+    </div>
+</div>
+<br hidden>
+{% endblock %}

@@ -1,0 +1,95 @@
+<!-- templates/base.html -->
+
+<!DOCTYPE html>
+<html class="has-background-success">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pflanzenglück</title>
+
+    <meta name="application-name" content="Pflanzenglück">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-title" content="Pflanzenglück">
+	<meta name="theme-color" content="#48C78E">
+	<meta name="apple-mobile-web-app-status-bar-style" content="#48C78E">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon-16x16.png">
+    <link rel="manifest" href="/static/misc/site.webmanifest">
+
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/bulma_0_9_4_min.css')}}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/misc.css')}}"/>
+    <script src="{{ url_for('static',filename='js/fontawesome_6_all.min.js')}}"></script>
+    <link href="{{ url_for('static',filename='css/material_icons.css') }}" rel="stylesheet">
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body class="has-navbar-fixed-top">
+    <nav class="navbar is-success is-fixed-top" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="{{url_for('main.home')}}">
+                <img src="{{url_for('static',filename='images/Pflanzenglueck.png')}}" alt="Pflanzenglück" width="150" height="45">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        
+        <div class="navbar-menu" id="navMenu">
+            {% if current_user.is_authenticated %}
+            <a href="{{url_for('main.rules')}}" class="navbar-item">
+                <span class="icon-text">
+                    <span class="icon">
+                        <i class="fas fa-table-list"></i>
+                    </span>
+                    <span>{{loc.navbar.rules}}</span>
+                </span>
+            </a>
+
+            <a href="{{url_for('main.profile')}}" class="navbar-item">
+                <span class="icon-text">
+                    <span class="icon">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <span>{{loc.navbar.profile}}</span>
+                </span>
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- <nav class="navbar is-link is-fixed-bottom">
+        {% block bottom_navbar_content %}
+        {% endblock %}
+    </nav> -->
+    <script>
+        // ...Für das Navbar-Burger-Menü
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all "navbar-burger" elements
+            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+            // Add a click event on each of them
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+                  // Get the target from the "data-target" attribute
+                  const target = el.dataset.target;
+                  const $target = document.getElementById(target);
+                  // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                  el.classList.toggle('is-active');
+                  $target.classList.toggle('is-active');
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>
